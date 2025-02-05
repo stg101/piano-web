@@ -11,11 +11,15 @@ import {
   NoteComponent,
 } from "./domain/code_compositor/components";
 import { Duration, Pitch } from "./domain/audio-player";
+import { Tokenizer } from "./domain/code_compositor/tokenizer";
 
 const app = createApp(App);
 
 app.use(createPinia());
 app.use(router);
+
+// const tokenizer = new Tokenizer();
+// console.log(tokenizer.tokenize("(<c d>2 c'x20 c'')"));
 
 // const note = new NoteComponent({
 //   pitch: new Pitch("C"),
