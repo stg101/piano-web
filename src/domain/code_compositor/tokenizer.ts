@@ -1,64 +1,75 @@
-interface Token {
-  value: string;
-  toString: () => string;
+export abstract class Token {
+  abstract value: string;
 }
 
-class OpenAngleBracketToken implements Token {
+export class OpenAngleBracketToken extends Token {
   value = "<";
 }
 
-class CloseAngleBracketToken implements Token {
+export class CloseAngleBracketToken extends Token {
   value = ">";
 }
 
-class OpenParenthesisToken implements Token {
+export class OpenParenthesisToken extends Token {
   value = "(";
 }
 
-class CloseParenthesisToken implements Token {
+export class CloseParenthesisToken extends Token {
   value = ")";
 }
 
-class CrossToken implements Token {
+export class CrossToken extends Token {
   value = "x";
 }
 
-class SpaceToken implements Token {
+export class SpaceToken extends Token {
   value = " ";
 }
 
-class NumberToken implements Token {
+export class NumberToken extends Token {
   value: string;
   constructor(value: string) {
+    super();
     this.value = value;
   }
 
   append(char: string) {
     return new NumberToken(`${this.value}${char}`);
   }
+
+  toInt() {
+    return parseInt(this.value);
+  }
 }
 
-class PitchToken implements Token {
+export class PitchToken extends Token {
   value: string;
   constructor(value: string) {
+    super();
     this.value = value;
   }
 }
 
-class QuoteGroupToken implements Token {
+export class QuoteGroupToken extends Token {
   value: string;
   constructor(value: string) {
+    super();
     this.value = value;
   }
 
   incr() {
     return new QuoteGroupToken(`${this.value}'`);
   }
+
+  toInt() {
+    return this.value.length;
+  }
 }
 
-class DotGroupToken implements Token {
+export class DotGroupToken extends Token {
   value: string;
   constructor(value: string) {
+    super();
     this.value = value;
   }
 
