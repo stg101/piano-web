@@ -18,7 +18,7 @@ export class AudioPlayerVisitor implements AudioComponentVisitor {
   }
 }
 
-class NoteComponent implements AudioComponent {
+export class NoteComponent implements AudioComponent {
   note: Note;
   constructor(note: Note) {
     this.note = note;
@@ -28,7 +28,7 @@ class NoteComponent implements AudioComponent {
   }
 }
 
-class ChordComponent implements AudioComponent {
+export class ChordComponent implements AudioComponent {
   notes: Note[];
   constructor(notes: Note[]) {
     this.notes = notes;
