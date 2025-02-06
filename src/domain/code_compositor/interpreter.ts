@@ -193,6 +193,8 @@ export class Interpreter {
         }
       }
     }
-    return stack.pop();
+    const result = stack.pop();
+    if (!(result instanceof Expr)) throw InterpreterError;
+    return result;
   }
 }

@@ -1,22 +1,44 @@
-import { AudioPlayer, type Note } from "../audio-player";
+import { AudioPlayer, type Note, type Playable } from "../audio-player";
 
 export interface AudioComponent {
   visit: (visitor: AudioComponentVisitor) => any;
 }
 
-interface AudioComponentVisitor {
+export interface AudioComponentVisitor {
   visitNoteComponent: (component: NoteComponent) => any;
   visitChordComponent: (component: ChordComponent) => any;
   visitSequenceComponent: (component: SequenceComponent) => any;
   visitRepeatComponent: (component: RepeatComponent) => any;
 }
 
-export class AudioPlayerVisitor implements AudioComponentVisitor {
+export class SerializerVisitor implements AudioComponentVisitor {
+  buffer: Playable[] = [];
+
   visitNoteComponent(comp: NoteComponent) {
-    AudioPlayer.getInstance().playNote(comp.note);
+    this.buffer.push({ type: "NOTE", value: comp.note });
   }
   visitChordComponent(comp: ChordComponent) {
-    AudioPlayer.getInstance().playChord(comp.notes);
+    this.buffer.push({ type: "CHORD", value: comp.notes });
+  }
+  visitSequenceComponent(comp: SequenceComponent) {
+    for (const child of comp.children) {
+      child.visit(this);
+    }
+  }
+  visitRepeatComponent(comp: RepeatComponent) {
+    let n = comp.count;
+    while (n--) {
+      comp.child.visit(this);
+    }
+  }
+}
+
+export class PrinterVisitor implements AudioComponentVisitor {
+  visitNoteComponent(comp: NoteComponent) {
+    console.log(comp.note);
+  }
+  visitChordComponent(comp: ChordComponent) {
+    console.log(comp.notes);
   }
   visitSequenceComponent(comp: SequenceComponent) {
     for (const child of comp.children) {

@@ -1,3 +1,5 @@
+import { timeout } from "./utils";
+
 type Options = {
   bpm: number;
   timeSignature: [number, number];
@@ -27,6 +29,10 @@ export class Duration {
     return (this.inBeats(options) * 60.0) / options.bpm;
   }
 
+  inMiliseconds(options: Options) {
+    return this.inSeconds(options) * 1000;
+  }
+
   extensionFactor() {
     return 2 - 1.0 / 2 ** this.extensions;
   }
@@ -43,6 +49,18 @@ export class Pitch {
 
   toString() {
     return `${this.tone.toUpperCase()}#${this.octave}`;
+  }
+}
+
+export type Playable =
+  | { type: "NOTE"; value: Note }
+  | { type: "CHORD"; value: Note[] };
+
+class AudioPlayerError extends Error {
+  constructor(msg: string) {
+    super(msg);
+    this.name = "AudioPlayerError";
+    Object.setPrototypeOf(this, new.target.prototype);
   }
 }
 
@@ -65,6 +83,26 @@ export class AudioPlayer {
     }
     this.instance = new AudioPlayer();
     return this.instance;
+  }
+
+  async playSequence(sequence: Playable[]) {
+    for (const playable of sequence) {
+      // if necesary refactor this to use polymorphism
+      if (playable.type == "NOTE") {
+        this.playNote(playable.value);
+        await timeout(playable.value.duration.inMiliseconds(this.options));
+      } else if (playable.type == "CHORD") {
+        const maxDuration = Math.max(
+          ...playable.value.map((note) =>
+            note.duration.inMiliseconds(this.options)
+          )
+        );
+        this.playChord(playable.value);
+        await timeout(maxDuration);
+      } else {
+        throw new AudioPlayerError("Unknown playable type");
+      }
+    }
   }
 
   playNote(note: Note) {
