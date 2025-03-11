@@ -10,24 +10,20 @@ async function play(text: string) {
 </script>
 
 <template>
-  <div class="about">
-    <h1>player</h1>
-    <p>player</p>
-    <div v-for="block in blocksStore.blocks">
-      <div v-for="node in block.nodes">
-        <div>{{ node.text }}</div>
-        <button @click="play(node.text)">play</button>
+  <div class="container mx-auto max-w-4xl">
+    <h1 class="text-3xl my-4">Player</h1>
+
+    <div class="" v-for="block in blocksStore.blocks">
+      <div class="card" v-for="node in block.nodes">
+        <div class="mockup-code">
+          <code class="pl-5">
+            {{ node.text }}
+          </code>
+        </div>
+        <button class="btn" @click="play(node.text)">play</button>
       </div>
     </div>
   </div>
 </template>
 
-<style>
-@media (min-width: 1024px) {
-  .about {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-  }
-}
-</style>
+<style></style>
