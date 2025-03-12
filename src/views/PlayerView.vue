@@ -32,6 +32,7 @@ const options = ref({
 
 const vimMode = ref(true);
 const editorText = ref("");
+const runningPlayableIndex = ref<number | null>(null);
 const buffer = ref<PlayableType[]>([]);
 
 watchEffect(() => {
@@ -44,7 +45,12 @@ watchEffect(() => {
 });
 
 async function play(text: string) {
-  await new AudioPlayer(options.value).playSequence(buffer.value);
+  await new AudioPlayer({
+    ...options.value,
+    beforePlayStep: (_, index) => {
+      runningPlayableIndex.value = index;
+    },
+  }).playSequence(buffer.value);
 }
 </script>
 
@@ -84,8 +90,11 @@ async function play(text: string) {
       </div>
     </div>
     <div>
-      <div class="mt-2" v-for="step in buffer">
-        <Playable :playable="step" />
+      <div class="mt-2" v-for="(step, index) in buffer">
+        <Playable
+          :playable="step"
+          :is-running="runningPlayableIndex == index"
+        />
       </div>
     </div>
   </div>

@@ -75,8 +75,8 @@ const defaultOptions = {
 } as const;
 
 export type AudioPlayerOptions = Options & {
-  afterPlayStep?: (note: Note | Note[]) => void;
-  beforePlayStep?: (note: Note | Note[]) => void;
+  afterPlayStep?: (note: Note | Note[], index: number) => void;
+  beforePlayStep?: (note: Note | Note[], index: number) => void;
 };
 
 export class AudioPlayer {
@@ -89,8 +89,9 @@ export class AudioPlayer {
   }
 
   async playSequence(sequence: Playable[]) {
+    let index = 0;
     for (const playable of sequence) {
-      this.options.beforePlayStep?.(playable.value);
+      this.options.beforePlayStep?.(playable.value, index);
       // if necesary refactor this to use polymorphism
       if (playable.type == "NOTE") {
         this.playNote(playable.value);
@@ -107,7 +108,8 @@ export class AudioPlayer {
         throw new AudioPlayerError("Unknown playable type");
       }
 
-      this.options.afterPlayStep?.(playable.value);
+      this.options.afterPlayStep?.(playable.value, index);
+      index++;
     }
   }
 

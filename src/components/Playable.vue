@@ -1,7 +1,28 @@
 <script setup lang="ts">
 import type { Note, Playable } from "@/domain/audio-player";
 
-const props = defineProps<{ playable: Playable }>();
+const props = defineProps<{ playable: Playable; isRunning: boolean }>();
+
+function noteColor() {
+  if (props.isRunning) {
+    return "bg-green-600";
+  }
+  return "bg-green-600/40";
+}
+
+function chordColor() {
+  if (props.isRunning) {
+    return "bg-blue-600";
+  }
+  return "bg-blue-600/49";
+}
+const commonClasses = ["card", "flex", "items-center", "justify-center"];
+function noteClass() {
+  return [...commonClasses, noteColor()].join(" ");
+}
+function chordClass() {
+  return [...commonClasses, chordColor()].join(" ");
+}
 
 function noteToString(note: Note) {
   return `${note.pitch.toString()}`;
@@ -13,18 +34,14 @@ function chordToString(chord: Note[]) {
 </script>
 
 <template>
-  <div class="mb-2">
-    <div class="" v-if="props.playable.type == 'NOTE'">
-      <div
-        class="card flex items-center justify-center bg-green-600/40 w-[100px]"
-      >
+  <div class="mb-2 w-[100px]">
+    <div v-if="props.playable.type == 'NOTE'">
+      <div :class="noteClass()">
         {{ noteToString(props.playable.value) }}
       </div>
     </div>
     <div v-else-if="props.playable.type == 'CHORD'">
-      <div
-        class="card flex items-center justify-center bg-blue-600/49 w-[100px]"
-      >
+      <div :class="chordClass()">
         {{ chordToString(props.playable.value) }}
       </div>
     </div>
