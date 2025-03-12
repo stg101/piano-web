@@ -6,7 +6,6 @@ import "ace-builds/src-noconflict/theme-monokai";
 import "ace-builds/src-noconflict/keybinding-vim";
 import "@/utils/mode-music";
 const editorRef = ref(null);
-ace.config.set("basePath", "/src/utils/");
 
 const checked = ref(false);
 let editor: ace.Editor | null = null;

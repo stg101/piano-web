@@ -69,5 +69,3 @@ ace.define("ace/mode/music", ["require", "exports", "ace/mode/text", "ace/mode/m
   exports.Mode = Mode;
 });
 
-// ✅ Register the mode so Ace can find it
-ace.config.setModuleUrl("ace/mode/music", new URL(import.meta.url).href);
