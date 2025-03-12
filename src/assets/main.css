@@ -1,2 +1,27 @@
 @import "tailwindcss";
 @plugin "daisyui";
+
+/* ace custom rules */
+.ace_note {
+  color: #ffeb3b; /* Yellow for notes */
+}
+
+.ace_chord {
+  color: #4caf50; /* Green for chords */
+}
+
+.ace_sequence {
+  color: #ff5722; /* Deep orange for sequences */
+}
+
+.ace_comment {
+  color: #9e9e9e; /* Grey for comments */
+}
+
+.ace_duration {
+  color: #2196f3; /* Blue for durations */
+}
+
+.angle.bracket {
+  color: #e91e63; /* Pink for angle brackets */
+}

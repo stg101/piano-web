@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ExpressionPlayer } from "@/services/expression-player";
 import { useBlocksStore } from "@/stores/blocks";
+import AceEditor from "./AceEditor.vue";
 
 const blocksStore = useBlocksStore();
 
@@ -12,7 +13,7 @@ async function play(text: string) {
 <template>
   <div class="container mx-auto max-w-4xl">
     <h1 class="text-3xl my-4">Player</h1>
-
+    <AceEditor />
     <div class="" v-for="block in blocksStore.blocks">
       <div class="card" v-for="node in block.nodes">
         <div class="mockup-code">
