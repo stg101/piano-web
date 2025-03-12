@@ -36,6 +36,7 @@ const runningPlayableIndex = ref<number | null>(null);
 const buffer = ref<PlayableType[]>([]);
 
 watchEffect(() => {
+  runningPlayableIndex.value = null;
   if (editorText.value == "") return;
   try {
     buffer.value = new ExpressionPlayer(editorText.value).buffer;
