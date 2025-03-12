@@ -5,7 +5,7 @@ import "ace-builds/src-min-noconflict/ext-language_tools";
 import "ace-builds/src-noconflict/theme-monokai";
 import "ace-builds/src-noconflict/keybinding-vim";
 import "@/utils/mode-music";
-const props = defineProps(["vimMode"]);
+const props = defineProps(["vimMode", "text"]);
 const emits = defineEmits(["update:text"]);
 const editorRef = ref(null);
 let editor: ace.Editor | null = null;
@@ -19,7 +19,13 @@ function updateVimMode() {
   }
 }
 
+function updateEditorText() {
+  if (editor == null) return;
+  editor.setValue(props.text);
+}
+
 watch(() => props.vimMode, updateVimMode, { immediate: true });
+watch(() => props.text, updateEditorText, { immediate: true });
 
 onMounted(() => {
   editor = ace.edit(editorRef.value);
@@ -38,8 +44,9 @@ onMounted(() => {
     if (editor == null) return;
     emits("update:text", editor.getValue());
   });
-  
+
   updateVimMode();
+  updateEditorText();
 });
 </script>
 

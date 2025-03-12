@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ExpressionPlayer } from "@/services/expression-player";
 import AceEditor from "./AceEditor.vue";
-import { ref, TrackOpTypes, watch, watchEffect } from "vue";
+import { nextTick, ref, TrackOpTypes, watch, watchEffect } from "vue";
 import {
   AudioPlayer,
   type Note,
@@ -10,6 +10,7 @@ import {
 } from "@/domain/audio-player";
 import Playable from "@/components/Playable.vue";
 import { timeout } from "@/domain/utils";
+import { init } from "ace-builds/src-noconflict/ext-keybinding_menu";
 
 const preloadedCompositions = [
   {
@@ -32,6 +33,7 @@ const options = ref({
 
 const vimMode = ref(true);
 const editorText = ref("");
+const initialEditorText = ref("");
 const runningPlayableIndex = ref<number | null>(null);
 const buffer = ref<PlayableType[]>([]);
 
@@ -45,13 +47,20 @@ watchEffect(() => {
   }
 });
 
-async function play(text: string) {
+async function playBuffer() {
   await new AudioPlayer({
     ...options.value,
     beforePlayStep: (_, index) => {
       runningPlayableIndex.value = index;
     },
   }).playSequence(buffer.value);
+}
+
+async function playText(text: string) {
+  initialEditorText.value = text;
+  editorText.value = text;
+  await nextTick();
+  await playBuffer();
 }
 </script>
 
@@ -76,17 +85,26 @@ async function play(text: string) {
     </div>
     <div class="grid grid-cols-2 gap-2">
       <div>
-        <AceEditor :vim-mode="vimMode" @update:text="editorText = $event" />
-        <button class="btn w-full" @click="play(editorText)">play</button>
+        <AceEditor
+          :vim-mode="vimMode"
+          @update:text="editorText = $event"
+          :text="initialEditorText"
+        />
+        <button class="btn w-full" @click="playBuffer()">play</button>
       </div>
       <div class="">
         <div class="card mb-2" v-for="comp in preloadedCompositions">
-          <div class="mockup-code">
-            <code class="pl-5">
+          <div class="card relative bg-black p-4">
+            <code class="">
               {{ comp.text }}
             </code>
+            <button
+              class="btn btn-sm absolute top-2 right-2"
+              @click="playText(comp.text)"
+            >
+              play
+            </button>
           </div>
-          <button class="btn" @click="play(comp.text)">play</button>
         </div>
       </div>
     </div>
