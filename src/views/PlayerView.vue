@@ -6,8 +6,9 @@ import {
   AudioPlayer,
   type Note,
   type Options,
-  type Playable,
+  type Playable as PlayableType,
 } from "@/domain/audio-player";
+import Playable from "@/components/Playable.vue";
 import { timeout } from "@/domain/utils";
 
 const preloadedCompositions = [
@@ -31,7 +32,7 @@ const options = ref({
 
 const vimMode = ref(true);
 const editorText = ref("");
-const buffer = ref<Playable[]>([]);
+const buffer = ref<PlayableType[]>([]);
 
 watchEffect(() => {
   if (editorText.value == "") return;
@@ -83,8 +84,8 @@ async function play(text: string) {
       </div>
     </div>
     <div>
-      <div v-for="step in buffer">
-        {{ step }}
+      <div class="mt-2" v-for="step in buffer">
+        <Playable :playable="step" />
       </div>
     </div>
   </div>
