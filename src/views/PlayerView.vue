@@ -1,8 +1,13 @@
 <script setup lang="ts">
 import { ExpressionPlayer } from "@/services/expression-player";
 import AceEditor from "./AceEditor.vue";
-import { ref } from "vue";
-import type { Options } from "@/domain/audio-player";
+import { ref, TrackOpTypes, watch, watchEffect } from "vue";
+import {
+  AudioPlayer,
+  type Note,
+  type Options,
+  type Playable,
+} from "@/domain/audio-player";
 import { timeout } from "@/domain/utils";
 
 const preloadedCompositions = [
@@ -24,16 +29,21 @@ const options = ref({
   },
 });
 
-const vimMode = ref(false);
+const vimMode = ref(true);
 const editorText = ref("");
+const buffer = ref<Playable[]>([]);
+
+watchEffect(() => {
+  if (editorText.value == "") return;
+  try {
+    buffer.value = new ExpressionPlayer(editorText.value).buffer;
+  } catch (e) {
+    buffer.value = [];
+  }
+});
 
 async function play(text: string) {
-  await new ExpressionPlayer(text).play({
-    ...options.value,
-    beforePlayStep: (note) => {
-      console.log(note);
-    },
-  });
+  await new AudioPlayer(options.value).playSequence(buffer.value);
 }
 </script>
 
@@ -70,6 +80,11 @@ async function play(text: string) {
           </div>
           <button class="btn" @click="play(comp.text)">play</button>
         </div>
+      </div>
+    </div>
+    <div>
+      <div v-for="step in buffer">
+        {{ step }}
       </div>
     </div>
   </div>

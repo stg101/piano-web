@@ -19,7 +19,7 @@ function updateVimMode() {
   }
 }
 
-watch(() => props.vimMode, updateVimMode);
+watch(() => props.vimMode, updateVimMode, { immediate: true });
 
 onMounted(() => {
   editor = ace.edit(editorRef.value);
@@ -38,6 +38,8 @@ onMounted(() => {
     if (editor == null) return;
     emits("update:text", editor.getValue());
   });
+  
+  updateVimMode();
 });
 </script>
 
