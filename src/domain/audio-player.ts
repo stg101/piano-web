@@ -50,7 +50,7 @@ export class Pitch {
   }
 
   toString() {
-    return `${this.tone.toUpperCase()}#${this.octave}`;
+    return `${this.tone.toUpperCase()}${this.octave}`;
   }
 }
 
