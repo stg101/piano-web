@@ -6,6 +6,7 @@ import "ace-builds/src-noconflict/theme-monokai";
 import "ace-builds/src-noconflict/keybinding-vim";
 import "@/utils/mode-music";
 const props = defineProps(["vimMode"]);
+const emits = defineEmits(["update:text"]);
 const editorRef = ref(null);
 let editor: ace.Editor | null = null;
 
@@ -31,6 +32,11 @@ onMounted(() => {
     enableSnippets: true,
     fontSize: "14px",
     showPrintMargin: false,
+  });
+
+  editor.on("change", () => {
+    if (editor == null) return;
+    emits("update:text", editor.getValue());
   });
 });
 </script>

@@ -3,6 +3,7 @@ import { ExpressionPlayer } from "@/services/expression-player";
 import AceEditor from "./AceEditor.vue";
 import { ref } from "vue";
 import type { Options } from "@/domain/audio-player";
+import { timeout } from "@/domain/utils";
 
 const preloadedCompositions = [
   {
@@ -24,9 +25,9 @@ const options = ref({
 });
 
 const vimMode = ref(false);
+const editorText = ref("");
 
 async function play(text: string) {
-  console.log(options.value);
   await new ExpressionPlayer(text).play(options.value);
 }
 </script>
@@ -34,27 +35,28 @@ async function play(text: string) {
 <template>
   <div class="container mx-auto max-w-4xl">
     <h1 class="text-3xl my-4">Player</h1>
+    <div class="flex gap-4 h-12">
+      <label class="fieldset-label flex">
+        <input
+          type="range"
+          min="1"
+          max="240"
+          v-model="options.bpm"
+          class="range"
+        />
+        <span>{{ options.bpm }}</span> BPM
+      </label>
+      <label class="fieldset-label">
+        <input type="checkbox" v-model="vimMode" class="toggle" />
+        Vim mode
+      </label>
+    </div>
     <div class="grid grid-cols-2 gap-2">
       <div>
-        <div class="flex gap-4 h-12">
-          <label class="fieldset-label flex">
-            <input
-              type="range"
-              min="1"
-              max="240"
-              v-model="options.bpm"
-              class="range"
-            />
-            {{ options.bpm }} BPM
-          </label>
-          <label class="fieldset-label">
-            <input type="checkbox" v-model="vimMode" class="toggle" />
-            Vim mode
-          </label>
-        </div>
-        <AceEditor :vim-mode="vimMode" />
+        <AceEditor :vim-mode="vimMode" @update:text="editorText = $event" />
+        <button class="btn w-full" @click="play(editorText)">play</button>
       </div>
-      <div class="pt-6">
+      <div class="">
         <div class="card mb-2" v-for="comp in preloadedCompositions">
           <div class="mockup-code">
             <code class="pl-5">
