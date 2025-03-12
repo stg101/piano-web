@@ -62,7 +62,7 @@ async function play(text: string) {
         <input
           type="range"
           min="1"
-          max="240"
+          max="480"
           v-model="options.bpm"
           class="range"
         />
