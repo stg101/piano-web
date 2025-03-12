@@ -28,7 +28,12 @@ const vimMode = ref(false);
 const editorText = ref("");
 
 async function play(text: string) {
-  await new ExpressionPlayer(text).play(options.value);
+  await new ExpressionPlayer(text).play({
+    ...options.value,
+    beforePlayStep: (note) => {
+      console.log(note);
+    },
+  });
 }
 </script>
 
