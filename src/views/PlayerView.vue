@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ExpressionPlayer } from "@/services/expression-player";
-import { useBlocksStore } from "@/stores/blocks";
 import AceEditor from "./AceEditor.vue";
+import { ref } from "vue";
+import type { Options } from "@/domain/audio-player";
 
-const blocksStore = useBlocksStore();
 const preloadedCompositions = [
   {
     text: "(<c d4>2 c'x20 c'')",
@@ -15,9 +15,19 @@ const preloadedCompositions = [
     text: "(c1x3)",
   },
 ];
+const options = ref({
+  bpm: 60,
+  timeSignature: {
+    beatsPerMeassure: 4,
+    noteValuePerBeat: 4,
+  },
+});
+
+const vimMode = ref(false);
 
 async function play(text: string) {
-  await new ExpressionPlayer(text).play();
+  console.log(options.value);
+  await new ExpressionPlayer(text).play(options.value);
 }
 </script>
 
@@ -26,7 +36,23 @@ async function play(text: string) {
     <h1 class="text-3xl my-4">Player</h1>
     <div class="grid grid-cols-2 gap-2">
       <div>
-        <AceEditor />
+        <div class="flex gap-4 h-12">
+          <label class="fieldset-label flex">
+            <input
+              type="range"
+              min="1"
+              max="240"
+              v-model="options.bpm"
+              class="range"
+            />
+            {{ options.bpm }} BPM
+          </label>
+          <label class="fieldset-label">
+            <input type="checkbox" v-model="vimMode" class="toggle" />
+            Vim mode
+          </label>
+        </div>
+        <AceEditor :vim-mode="vimMode" />
       </div>
       <div class="pt-6">
         <div class="card mb-2" v-for="comp in preloadedCompositions">

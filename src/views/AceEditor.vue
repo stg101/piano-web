@@ -5,19 +5,20 @@ import "ace-builds/src-min-noconflict/ext-language_tools";
 import "ace-builds/src-noconflict/theme-monokai";
 import "ace-builds/src-noconflict/keybinding-vim";
 import "@/utils/mode-music";
+const props = defineProps(["vimMode"]);
 const editorRef = ref(null);
-
-const checked = ref(false);
 let editor: ace.Editor | null = null;
 
-function toggleCheck() {
+function updateVimMode() {
   if (editor == null) return;
-  if (checked.value) {
+  if (props.vimMode) {
     editor.setKeyboardHandler("ace/keyboard/vim");
   } else {
     editor.setKeyboardHandler("");
   }
 }
+
+watch(() => props.vimMode, updateVimMode);
 
 onMounted(() => {
   editor = ace.edit(editorRef.value);
@@ -35,17 +36,6 @@ onMounted(() => {
 </script>
 
 <template>
-  <div>
-    <label class="fieldset-label">
-      <input
-        type="checkbox"
-        v-model="checked"
-        class="toggle"
-        @change="toggleCheck"
-      />
-      Vim mode
-    </label>
-  </div>
   <div ref="editorRef" style="height: 500px; width: 100%"></div>
 </template>
 

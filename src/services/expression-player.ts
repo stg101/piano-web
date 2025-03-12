@@ -1,4 +1,4 @@
-import { AudioPlayer } from "@/domain/audio-player";
+import { AudioPlayer, type Options } from "@/domain/audio-player";
 import { AudioComposition } from "@/domain/code_compositor/audio-composition";
 import { SerializerVisitor } from "@/domain/code_compositor/components";
 
@@ -10,7 +10,7 @@ export class ExpressionPlayer {
     this.compositon.visit(this.serializerVisitor);
   }
 
-  async play() {
-    AudioPlayer.getInstance().playSequence(this.serializerVisitor.buffer);
+  async play(options: Options) {
+    new AudioPlayer(options).playSequence(this.serializerVisitor.buffer);
   }
 }

@@ -1,8 +1,8 @@
 import { timeout } from "./utils";
 
-type Options = {
+export type Options = {
   bpm: number;
-  timeSignature: [number, number];
+  timeSignature: { beatsPerMeassure: number; noteValuePerBeat: number };
 };
 
 export type Note = { pitch: Pitch; duration: Duration };
@@ -21,7 +21,9 @@ export class Duration {
 
   inBeats(options: Options) {
     return (
-      (options.timeSignature[1] / this.denominator) * this.extensionFactor()
+      // TODO: revisar esto
+      (options.timeSignature["beatsPerMeassure"] / this.denominator) *
+      this.extensionFactor()
     );
   }
 
@@ -64,25 +66,21 @@ class AudioPlayerError extends Error {
   }
 }
 
+const defaultOptions = {
+  bpm: 60,
+  timeSignature: {
+    beatsPerMeassure: 4,
+    noteValuePerBeat: 4,
+  },
+} as const;
+
 export class AudioPlayer {
   audioCtx: AudioContext;
   options: Options;
-  private static instance: AudioPlayer;
 
-  constructor() {
+  constructor(options: Options = defaultOptions) {
     this.audioCtx = new window.AudioContext();
-    this.options = {
-      bpm: 60,
-      timeSignature: [4, 4],
-    };
-  }
-
-  static getInstance() {
-    if (this.instance) {
-      return this.instance;
-    }
-    this.instance = new AudioPlayer();
-    return this.instance;
+    this.options = options;
   }
 
   async playSequence(sequence: Playable[]) {
