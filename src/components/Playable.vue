@@ -1,7 +1,11 @@
 <script setup lang="ts">
-import type { Note, Playable } from "@/domain/audio-player";
+import type { Note, Options, Playable } from "@/domain/audio-player";
 
-const props = defineProps<{ playable: Playable; isRunning: boolean }>();
+const props = defineProps<{
+  playable: Playable;
+  isRunning: boolean;
+  options: Options;
+}>();
 
 function noteColor() {
   if (props.isRunning) {
@@ -16,11 +20,32 @@ function chordColor() {
   }
   return "bg-blue-600/49";
 }
+
+const heigthFactor = 20;
+function chordHeight(chord: Note[]) {
+  return Math.max(
+    ...chord.map((note) => note.duration.inBeats(props.options) * heigthFactor)
+  );
+}
+
+function noteHeight(note: Note) {
+  return note.duration.inBeats(props.options) * heigthFactor;
+}
+
+function getHeight() {
+  if (props.playable.type == "NOTE") {
+    return noteHeight(props.playable.value as Note) + "px";
+  }
+  return chordHeight(props.playable.value as Note[]) + "px";
+}
+
 const commonClasses = ["card", "flex", "items-center", "justify-center"];
 function noteClass() {
+  // const height = `h-[${noteHeight(props.playable.value as Note)}px]`;
   return [...commonClasses, noteColor()].join(" ");
 }
 function chordClass() {
+  // const height = `h-[${chordHeight(props.playable.value as Note[])}px]`;
   return [...commonClasses, chordColor()].join(" ");
 }
 
@@ -34,14 +59,19 @@ function chordToString(chord: Note[]) {
 </script>
 
 <template>
-  <div class="mb-2 w-[100px]">
+  <div
+    :style="{
+      width: '100px',
+      marginBottom: '2px',
+    }"
+  >
     <div v-if="props.playable.type == 'NOTE'">
-      <div :class="noteClass()">
+      <div :class="noteClass()" :style="{ height: getHeight() }">
         {{ noteToString(props.playable.value) }}
       </div>
     </div>
     <div v-else-if="props.playable.type == 'CHORD'">
-      <div :class="chordClass()">
+      <div :class="chordClass()" :style="{ height: getHeight() }">
         {{ chordToString(props.playable.value) }}
       </div>
     </div>

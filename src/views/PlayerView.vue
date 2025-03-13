@@ -17,20 +17,25 @@ const preloadedCompositions = [
     text: "(<c d4>2 c'x20 c'')",
   },
   {
-    text: "(c1x3)",
+    text: `(
+  ex2 e2
+  ex2 e2
+
+  e g c d e2
+  fx5 ex4 dx2 e d2 g2
+)`,
   },
   {
     text: "(c1x3)",
   },
 ];
 const options = ref({
-  bpm: 60,
+  bpm: 120,
   timeSignature: {
     beatsPerMeassure: 4,
     noteValuePerBeat: 4,
   },
 });
-
 const vimMode = ref(true);
 const editorText = ref("");
 const initialEditorText = ref("");
@@ -51,6 +56,7 @@ async function playBuffer() {
   await new AudioPlayer({
     ...options.value,
     beforePlayStep: (_, index) => {
+      console.log(_);
       runningPlayableIndex.value = index;
     },
   }).playSequence(buffer.value);
@@ -96,7 +102,7 @@ async function playText(text: string) {
         <div class="card mb-2" v-for="comp in preloadedCompositions">
           <div class="card relative bg-black p-4">
             <code class="">
-              {{ comp.text }}
+              <pre>{{ comp.text }}</pre>
             </code>
             <button
               class="btn btn-sm absolute top-2 right-2"
@@ -111,6 +117,7 @@ async function playText(text: string) {
     <div>
       <div class="mt-2" v-for="(step, index) in buffer">
         <Playable
+          :options="options"
           :playable="step"
           :is-running="runningPlayableIndex == index"
         />
